@@ -35,7 +35,25 @@ info:
   title: Wallet API
   version: "1.0"
 paths:
-  /api/v1/wallets:
+  /api/v1/users/:id/wallets:
+    delete:
+      consumes:
+      - application/json
+      description: Delete wallet by user_id
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/wallet.Wallet'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/wallet.Err'
+      summary: Delete wallet by user_id
+      tags:
+      - users
     get:
       consumes:
       - application/json
@@ -52,6 +70,62 @@ paths:
           schema:
             $ref: '#/definitions/wallet.Err'
       summary: Get wallet by user id
+      tags:
+      - users
+  /api/v1/wallets:
+    get:
+      consumes:
+      - application/json
+      description: Get all wallets
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/wallet.Wallet'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/wallet.Err'
+      summary: Get all wallets
+      tags:
+      - wallet
+    post:
+      consumes:
+      - application/json
+      description: Create wallet
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/wallet.Wallet'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/wallet.Err'
+      summary: Create wallet
+      tags:
+      - wallet
+  /api/v1/wallets/:id:
+    put:
+      consumes:
+      - application/json
+      description: Update wallet by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/wallet.Wallet'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/wallet.Err'
+      summary: Update wallet by id
       tags:
       - wallet
 swagger: "2.0"

@@ -101,3 +101,11 @@ func (p *Postgres) UpdateWallet(id int, wallet wallet.Wallet) error {
 	}
 	return nil
 }
+
+func (p *Postgres) DeleteWallet(id int) error {
+	_, err := p.Db.Exec("DELETE FROM user_wallet WHERE user_id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
