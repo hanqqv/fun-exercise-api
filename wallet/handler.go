@@ -11,7 +11,7 @@ type Handler struct {
 }
 
 type Storer interface {
-	Wallets() ([]Wallet, error)
+	Wallets(wallet_type string) ([]Wallet, error)
 }
 
 func New(db Storer) *Handler {
@@ -22,7 +22,7 @@ type Err struct {
 	Message string `json:"message"`
 }
 
-// WalletHandler
+// GetAllWalletsHandler
 //
 //	@Summary		Get all wallets
 //	@Description	Get all wallets
@@ -32,8 +32,9 @@ type Err struct {
 //	@Success		200	{object}	Wallet
 //	@Router			/api/v1/wallets [get]
 //	@Failure		500	{object}	Err
-func (h *Handler) WalletHandler(c echo.Context) error {
-	wallets, err := h.store.Wallets()
+func (h *Handler) GetAllWalletsHandler(c echo.Context) error {
+	wallet_type := c.QueryParam("wallet_type")
+	wallets, err := h.store.Wallets(wallet_type)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, Err{Message: err.Error()})
 	}

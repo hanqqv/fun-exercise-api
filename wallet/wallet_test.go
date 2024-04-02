@@ -17,7 +17,7 @@ type StubWallet struct {
 	err    error
 }
 
-func (s StubWallet) Wallets() ([]Wallet, error) {
+func (s StubWallet) Wallets(wallet_type string) ([]Wallet, error) {
 	return s.wallet, s.err
 }
 
@@ -33,7 +33,7 @@ func TestWallet(t *testing.T) {
 		stubError := StubWallet{err: echo.ErrInternalServerError}
 		p := New(stubError)
 
-		p.WalletHandler(c)
+		p.GetAllWalletsHandler(c)
 
 		if rec.Code != http.StatusInternalServerError {
 			t.Errorf("expected status code %d but got %d", http.StatusInternalServerError, rec.Code)
@@ -53,7 +53,7 @@ func TestWallet(t *testing.T) {
 		stubError := StubWallet{wallet: []Wallet{{ID: 1, UserID: 1, UserName: "John Doe", WalletName: "John's Savings", WalletType: "Savings", Balance: 1000.00, CreatedAt: createdAt}}}
 		p := New(stubError)
 
-		p.WalletHandler(c)
+		p.GetAllWalletsHandler(c)
 
 		want := []Wallet{{ID: 1, UserID: 1, UserName: "John Doe", WalletName: "John's Savings", WalletType: "Savings", Balance: 1000.00, CreatedAt: createdAt}}
 		gotJSON := rec.Body.Bytes()
