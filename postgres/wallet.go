@@ -54,19 +54,8 @@ func (p *Postgres) Wallets(walletType string) ([]wallet.Wallet, error) {
 	return wallets, nil
 }
 
-// func WalletByType(wallet_type string) (string, []interface{}) {
-// 	var query string
-// 	var args []interface{}
-// 	if wallet_type != "" {
-// 		query += " WHERE wallet_type = $1"
-// 		args = append(args, wallet_type)
-// 	}
-// 	return "SELECT * FROM user_wallet " + query, args
-// }
-
 func (p *Postgres) WalletByUserID(id int) ([]wallet.Wallet, error) {
-	query, args := WalletByUserIDQuery(id)
-	rows, err := p.Db.Query(query, args...)
+	rows, err := p.Db.Query("SELECT * FROM user_wallet WHERE user_id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -96,6 +85,19 @@ func (p *Postgres) WalletByUserID(id int) ([]wallet.Wallet, error) {
 	return wallets, nil
 }
 
-func WalletByUserIDQuery(id int) (string, []interface{}) {
-	return "SELECT * FROM user_wallet WHERE user_id = $1", []interface{}{id}
+func (p *Postgres) CreateWallet(wallet wallet.Wallet) error {
+	row := p.Db.QueryRow("INSERT INTO user_wallet (user_id, user_name, wallet_name, wallet_type, balance) VALUES ($1, $2, $3, $4, $5) RETURNING id", wallet.UserID, wallet.UserName, wallet.WalletName, wallet.WalletType, wallet.Balance)
+	err := row.Scan(&wallet.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *Postgres) UpdateWallet(id int, wallet wallet.Wallet) error {
+	_, err := p.Db.Exec("UPDATE user_wallet SET user_id = $1, user_name = $2, wallet_name = $3, wallet_type = $4, balance = $5 WHERE id = $6", wallet.UserID, wallet.UserName, wallet.WalletName, wallet.WalletType, wallet.Balance, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

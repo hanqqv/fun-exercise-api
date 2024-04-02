@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/api/v1/wallets": {
             "get": {
-                "description": "Get all wallets",
+                "description": "Get wallet by user id",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,7 +27,7 @@ const docTemplate = `{
                 "tags": [
                     "wallet"
                 ],
-                "summary": "Get all wallets",
+                "summary": "Get wallet by user id",
                 "responses": {
                     "200": {
                         "description": "OK",

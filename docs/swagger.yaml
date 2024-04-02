@@ -39,7 +39,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all wallets
+      description: Get wallet by user id
       produces:
       - application/json
       responses:
@@ -51,7 +51,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/wallet.Err'
-      summary: Get all wallets
+      summary: Get wallet by user id
       tags:
       - wallet
 swagger: "2.0"
