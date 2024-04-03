@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"strconv"
+
 	"github.com/KKGo-Software-engineering/fun-exercise-api/postgres"
 	"github.com/KKGo-Software-engineering/fun-exercise-api/wallet"
 	"github.com/labstack/echo/v4"
@@ -14,7 +18,17 @@ import (
 // @description	Sophisticated Wallet API
 // @host			localhost:1323
 func main() {
-	p, err := postgres.New()
+	host := os.Getenv("DB_HOST")
+	port, _ := strconv.Atoi(os.Getenv("DB_PORT")) // Convert port to int
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+	dbConfig := postgres.Config{
+		DatabaseURL: fmt.Sprintf("host=%s port=%d user=%s "+
+			"password=%s dbname=%s sslmode=disable",
+			host, port, user, password, dbname),
+	}
+	p, err := postgres.New(dbConfig)
 	if err != nil {
 		panic(err)
 	}

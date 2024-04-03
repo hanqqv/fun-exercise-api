@@ -1,5 +1,7 @@
-
 version: '3'
+
+networks:
+  mynetwork:
 
 services:
     postgres:
@@ -12,6 +14,9 @@ services:
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
         ports:
             - "5432:5432"
+        networks:
+             - mynetwork
+        restart: unless-stopped
 
 volumes:
     pgdata:
