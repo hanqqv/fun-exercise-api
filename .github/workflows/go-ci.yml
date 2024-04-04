@@ -25,9 +25,6 @@ jobs:
             run: go get .
           - name: Test with Go CLI
             run: go test -v ./...
-          - name: Staticcheck
-            run: go get -u honnef.co/go/tools/cmd/staticcheck
-                 staticcheck ./...
           - name: GolangCI-Lint
             run: go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
                  golangci-lint run ./...
@@ -45,7 +42,7 @@ jobs:
               uses: actions/setup-go@v4
               with:
                   go-version: ${{ matrix.go-version }}
-                  
+
             - name: Setup SHA
               run: echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
 
