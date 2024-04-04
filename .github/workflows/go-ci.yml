@@ -26,9 +26,10 @@ jobs:
           - name: Test with Go CLI
             run: go test -v ./...
           - name: GolangCI-Lint
-            run: |
-              go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
-              golangci-lint run ./...
+            uses: golangci/golangci-lint-action@v2
+            with:
+              version: v1.57.2
+              working-directory: .
           - name: Go Vet
             run: go vet ./...
     build-docker-image:
