@@ -6,44 +6,46 @@ on:
   pull_request:
 
 jobs:
-    static-code-analysis:
-        name: Static Code Analysis
+    check_quality:
+        name: check quality
         runs-on: ubuntu-latest
+        strategy:
+          matrix:
+              go-version: ['1.21.8', '1.22.1']
         steps:
-          - name: Checkout code
-            uses: actions/checkout@v4
+          - uses: actions/checkout@v4
+          - name: Setup Go ${{ matrix.go-version }}
+            uses: actions/setup-go@v4
             with:
-                fetch-depth: 0
-          
-          - name: Install golangci-lint
-            uses: golangci/golangci-lint-action@v2
-            with:
-                version: latest
-                args: run ./...
+                go-version: ${{ matrix.go-version }}
 
-          - name: Install staticcheck
-            run: |
-                curl -sSfL https://raw.githubusercontent.com/staticcheck/staticcheck/master/install.sh | sh -s -- -b $(go env GOPATH)/bin latest
-
-          - name: Run go vet
+          - name: Display Go version
+            run: go version
+          - name: Install dependencies
+            run: go get .
+          - name: Test with Go CLI
+            run: go test -v ./...
+          - name: Staticcheck
+            run: go get -u honnef.co/go/tools/cmd/staticcheck
+                 staticcheck ./...
+          - name: GolangCI-Lint
+            run: go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+                 golangci-lint run ./...
+          - name: Go Vet
             run: go vet ./...
     build-docker-image:
         name: Build Docker Image
+        needs: check_quality
         runs-on: ubuntu-latest
-        needs: static-code-analysis
-        strategy:
-            matrix:
-                go-version: ['1.21.8', '1.22.1']
+        outputs:
+          image_tag: ${{ steps.meta.outputs.tags }}  For CD Propose
         steps:
             - uses: actions/checkout@v4
             - name: Setup Go ${{ matrix.go-version }}
               uses: actions/setup-go@v4
               with:
                   go-version: ${{ matrix.go-version }}
-
-            - name: Display Go version
-              run: go version
-
+                  
             - name: Setup SHA
               run: echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
 
